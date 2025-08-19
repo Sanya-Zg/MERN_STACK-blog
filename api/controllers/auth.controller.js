@@ -1,8 +1,9 @@
 import { User } from '../models/user.model.js';
 import validator from 'validator';
 import bcryptjs from 'bcryptjs';
+import { errorHandler } from '../utils/error.js';
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   try {
@@ -19,38 +20,35 @@ export const signup = async (req, res) => {
       )
       .map((field) => field.name);
     if (emptyFields.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: `${emptyFields.join(', ')} ${
-          emptyFields.length > 1 ? 'are' : 'is'
-        } required`,
-      });
+      return next(
+        errorHandler(
+          400,
+          `${emptyFields.join(' and ')} ${
+            emptyFields.length > 1 ? 'are' : 'is'
+          } required`
+        )
+      );
     }
 
     // Check if 'username' exist
-    const userName = User.findOne({username});
+    const userName = await User.findOne({ username });
     if (userName) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'This username already exists' });
+      return next(errorHandler(400, 'This username already exists'));
     }
+
     // Checking if 'email' is valid
     if (!validator.isEmail(email)) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Email is not valid' });
+      return next(errorHandler(400, 'Email is not valid'));
     }
 
     // Check if 'email' exist
     const user = await User.findOne({ email });
     if (user) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Email already in use' });
+      return next(errorHandler(400, 'Email already in use'));
     }
 
     // Hashed the password
-    const hashedPassword = await bcryptjs.hash(password, 10)
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     // Create and save user in DB
     const newUser = new User({
@@ -60,7 +58,7 @@ export const signup = async (req, res) => {
     });
     await newUser.save();
 
-    res.status(200).json({ success: true, message: 'User created' });
+    res.status(201).json({ success: true, message: 'User created' });
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(400).json({
@@ -68,6 +66,6 @@ export const signup = async (req, res) => {
         message: Object.values(error.errors)[0].message,
       });
     }
-    return res.status(500).json({ success: false, message: error.message });
+    return next(error);
   }
 };
