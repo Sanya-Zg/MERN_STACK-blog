@@ -1,12 +1,14 @@
 import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
 import { connectDB } from './db/connectDB.js';
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
 
-dotenv.config();
+
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
@@ -28,7 +30,7 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(3000, () => {
+    app.listen(PORT, () => {
       console.log(`Server listening on port 3000`);
     });
   } catch (error) {

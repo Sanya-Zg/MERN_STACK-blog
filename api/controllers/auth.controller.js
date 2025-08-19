@@ -1,7 +1,9 @@
 import { User } from '../models/user.model.js';
 import validator from 'validator';
 import bcryptjs from 'bcryptjs';
-import { errorHandler } from '../utils/error.js';
+import { errorHandler } from '../utils/errors.js';
+import sendEmail from './config/sendEmail.js';
+import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -56,9 +58,21 @@ export const signup = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
-    await newUser.save();
+    const save = await newUser.save();
 
-    res.status(201).json({ success: true, message: 'User created' });
+    // Sending verification email
+    const verifyEmailUrl = `${process.env.FRONTEND_URI}/verify-email?code=${save?._id}`;
+
+    const verifyEmail = await sendEmail({
+      sendTo: email,
+      subject: 'Verify email from SanyaBlog',
+      html: verifyEmailTemplate({
+        username,
+        url: verifyEmailUrl,
+      }),
+    });
+
+    return res.status(201).json({ success: true, message: 'User created' });
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(400).json({
@@ -67,5 +81,38 @@ export const signup = async (req, res, next) => {
       });
     }
     return next(error);
+  }
+};
+
+export const verifyEmail = async (req, res, next) => {
+  try {
+    const { code } = req.body;
+
+    // Check if verify code exists
+    if (!code) {
+      return next(errorHandler(400, 'Verification code is required'));
+    }
+
+    const user = await User.findOne({ _id: code });
+
+    if (!user) {
+      return next(errorHandler(400, 'Invalid code'));
+    }
+
+    user.isVerified = true;
+
+    // Saving changes to the DB
+    await user.save();
+
+    
+    return res.json({
+      message: 'Verify email done',
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: false,
+    });
   }
 };
