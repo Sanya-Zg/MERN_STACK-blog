@@ -1,9 +1,10 @@
-import { User } from '../models/user.model.js';
+import User from '../models/user.model.js';
 import validator from 'validator';
 import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/errors.js';
-import sendEmail from '../config/sendEmail.js'
+import sendEmail from '../config/sendEmail.js';
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
+import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -77,8 +78,9 @@ export const signup = async (req, res, next) => {
     //   }),
     // });
 
-    return res.status(201).json({ success: true, message: 'User created successfully!' });
-
+    return res
+      .status(201)
+      .json({ success: true, message: 'User created successfully!' });
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(400).json({
@@ -110,7 +112,6 @@ export const verifyEmail = async (req, res, next) => {
     // Saving changes to the DB
     await user.save();
 
-    
     return res.json({
       message: 'Verify email done',
       success: true,
@@ -120,5 +121,44 @@ export const verifyEmail = async (req, res, next) => {
       message: error.message || error,
       success: false,
     });
+  }
+};
+
+export const signin = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if fields are fill in
+    if (!email || !password) {
+      return next(errorHandler(400, 'All fields are required!'));
+    }
+
+    // Check if user's email is in DB
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return next(errorHandler(404, 'Wrong credentials'));
+    }
+
+    // Check if password is valid
+    const validPassword = await bcryptjs.compare(password, user.password);
+
+    if (!validPassword) {
+      return next(errorHandler(400, 'Wrong credentials'));
+    }
+
+    // Create token (jwt)
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
+
+    const { password: pass, ...rest } = user._doc;
+
+    return res
+      .status(200)
+      .cookie('access_token', token, { httpOnly: true })
+      .json(rest);
+  } catch (error) {
+    next(error);
   }
 };
