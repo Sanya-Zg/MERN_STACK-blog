@@ -9,7 +9,7 @@ const resend = new Resend(process.env.RESEND_API);
 const sendEmail = async ({ sendTo, subject, html }) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Maslov <onboarding@resend.dev>',
+      from: 'Maslov <support@zgsan.site>',
       to: sendTo,
       subject: subject,
       html: html,

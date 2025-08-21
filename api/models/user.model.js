@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      minLength: [3, 'User name can not be less than 3 symbols'],
+      minLength: [3, 'User name can not be less than 3 characters'],
       unique: true,
       trim: true,
     },
@@ -18,12 +18,12 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minLength: [6, 'Password can not be less than 6 symbols'],
+      minLength: [6, 'Password can not be less than 6 characters'],
     },
     isVerified: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   { timestamps: true }
 );

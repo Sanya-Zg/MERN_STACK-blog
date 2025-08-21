@@ -2,7 +2,7 @@ import { User } from '../models/user.model.js';
 import validator from 'validator';
 import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/errors.js';
-import sendEmail from './config/sendEmail.js';
+import sendEmail from '../config/sendEmail.js'
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
 
 export const signup = async (req, res, next) => {
@@ -49,6 +49,11 @@ export const signup = async (req, res, next) => {
       return next(errorHandler(400, 'Email already in use'));
     }
 
+    // Checking if password length more than 5 symbols
+    if (password.length < 6) {
+      return next(errorHandler(400, 'Password must be at least 6 characters'));
+    }
+
     // Hashed the password
     const hashedPassword = await bcryptjs.hash(password, 10);
 
@@ -63,16 +68,17 @@ export const signup = async (req, res, next) => {
     // Sending verification email
     const verifyEmailUrl = `${process.env.FRONTEND_URI}/verify-email?code=${save?._id}`;
 
-    const verifyEmail = await sendEmail({
-      sendTo: email,
-      subject: 'Verify email from SanyaBlog',
-      html: verifyEmailTemplate({
-        username,
-        url: verifyEmailUrl,
-      }),
-    });
+    // const verifyEmail = await sendEmail({
+    //   sendTo: email,
+    //   subject: 'Verify email from SanyaBlog',
+    //   html: verifyEmailTemplate({
+    //     username,
+    //     url: verifyEmailUrl,
+    //   }),
+    // });
 
-    return res.status(201).json({ success: true, message: 'User created' });
+    return res.status(201).json({ success: true, message: 'User created successfully!' });
+
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(400).json({
