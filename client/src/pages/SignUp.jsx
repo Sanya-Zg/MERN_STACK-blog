@@ -7,6 +7,7 @@ import {
   TextInput,
 } from 'flowbite-react';
 import { useState } from 'react';
+import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import { Link, useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
@@ -14,6 +15,7 @@ const SignUp = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fieldEmpty, setFieldEmpty] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -53,13 +55,13 @@ const SignUp = () => {
       const data = await res.json();
 
       if (data.success === false) {
-        setLoading(false)
+        setLoading(false);
         return setErrorMessage(data.message);
       }
       setLoading(false);
 
-      if(res.ok) {
-        navigate('/sign-in')
+      if (res.ok) {
+        navigate('/sign-in');
       }
     } catch (error) {
       setErrorMessage(error.message);
@@ -69,7 +71,7 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen mt-20">
-      <div className="min-h-[500px] flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
+      <div className="min-h-[500px] flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-6">
         {/* left */}
         <div className="flex-1">
           <Link to="/" className="font-bold dark:text-white text-4xl">
@@ -112,15 +114,22 @@ const SignUp = () => {
                 {fieldEmpty.email && fieldEmpty.email}
               </HelperText>
             </div>
-            <div className="">
+            <div className="relative">
               <Label>Your password</Label>
               <TextInput
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 id="password"
                 color={fieldEmpty.password ? 'failure' : 'gray'}
                 onChange={handleChange}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute top-9 right-3 flex items-center cursor-pointer"
+              >
+                {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+              </button>
               <HelperText className="text-red-600 font-semibold">
                 {fieldEmpty.password && fieldEmpty.password}
               </HelperText>
@@ -128,13 +137,12 @@ const SignUp = () => {
 
             <Button
               type="submit"
-              className="px-2 py-1 bg-gradient-to-r from-cyan-400 to-cyan-800 rounded-lg text-white"
-              
+              className="px-2 py-1 bg-gradient-to-r from-cyan-400 to-cyan-800 rounded-lg text-white cursor-pointer"
             >
               {loading ? (
                 <>
                   <Spinner size="sm" />
-                  <span className='pl-3'>Loading...</span>
+                  <span className="pl-3">Loading...</span>
                 </>
               ) : (
                 'Sign Up'
