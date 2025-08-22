@@ -12,6 +12,7 @@ import { FaRegEyeSlash } from 'react-icons/fa6';
 import { FaRegEye } from 'react-icons/fa6';
 import { useDispatch, useSelector } from 'react-redux';
 import { signInFailure, signInStart, signInSuccess } from '../redux/userSlice';
+import OAuth from '../components/OAuth';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
@@ -123,7 +124,7 @@ const SignIn = () => {
 
             <Button
               type="submit"
-              className="px-2 py-1 bg-gradient-to-r from-cyan-400 to-cyan-800 rounded-lg text-white cursor-pointer"
+              className="px-2 py-1 bg-gradient-to-r from-cyan-400 to-cyan-800 rounded-lg text-white cursor-pointer shadow-lg hover:bg-gradient-to-r hover:from-cyan-300 hover:to-cyan-800 transition duration-200"
             >
               {loading ? (
                 <>
@@ -134,19 +135,19 @@ const SignIn = () => {
                 'Sign In'
               )}
             </Button>
+            <OAuth />
           </form>
 
           <div className="flex gap-2 text-sm mt-5">
             <span>Don't have an account?</span>
-            <Link to="/sign-up" className="text-cyan-400">
+            <Link to="/sign-up" className="text-cyan-500 font-medium">
               Sign Up
             </Link>
           </div>
 
-          <div className="flex gap-2 text-sm mt-5">
-            <span>Forgot password</span>
-            <Link to="/sign-up" className="text-cyan-400">
-              Sign Up
+          <div className="flex gap-2 text-sm mt-3">
+            <Link to="/sign-up" className="font-semibold text-cyan-600">
+              Forgot password
             </Link>
           </div>
 
