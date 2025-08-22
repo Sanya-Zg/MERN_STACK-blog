@@ -10,14 +10,16 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaRegEyeSlash } from 'react-icons/fa6';
 import { FaRegEye } from 'react-icons/fa6';
+import { useDispatch, useSelector } from 'react-redux';
+import { signInFailure, signInStart, signInSuccess } from '../redux/userSlice';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [fieldEmpty, setFieldEmpty] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -30,7 +32,7 @@ const SignIn = () => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      setErrorMessage('Please fill in all fields.');
+      return dispatch(signInFailure('Please fill in all fields.'));
     }
 
     let errors = {};
@@ -43,8 +45,7 @@ const SignIn = () => {
     if (Object.keys(errors).length > 0) return;
 
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(signInStart());
 
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
@@ -55,17 +56,15 @@ const SignIn = () => {
       const data = await res.json();
 
       if (data.success === false) {
-        setLoading(false);
-        return setErrorMessage(data.message);
+        return dispatch(signInFailure(data.message));
       }
-      setLoading(false);
 
       if (res.ok) {
+        dispatch(signInSuccess(data));
         navigate('/');
       }
     } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      return dispatch(signInFailure(error.message));
     }
   };
 
@@ -139,6 +138,13 @@ const SignIn = () => {
 
           <div className="flex gap-2 text-sm mt-5">
             <span>Don't have an account?</span>
+            <Link to="/sign-up" className="text-cyan-400">
+              Sign Up
+            </Link>
+          </div>
+
+          <div className="flex gap-2 text-sm mt-5">
+            <span>Forgot password</span>
             <Link to="/sign-up" className="text-cyan-400">
               Sign Up
             </Link>
