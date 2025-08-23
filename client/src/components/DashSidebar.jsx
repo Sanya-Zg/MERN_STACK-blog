@@ -16,15 +16,20 @@ const DashSidebar = () => {
     }
   }, [location.search]);
   return (
-    <Sidebar className='w-full'>
+    <Sidebar className="w-full">
       <SidebarItems>
         <SidebarItemGroup>
-          <Link to='/dashboard?tab=profile'>
-            <SidebarItem active={tab==='profile'} icon={HiUser} label={'User'} labelColor="dark">
-              Profile
-            </SidebarItem>
-          </Link>
-          <SidebarItem icon={TbLogout2} className='cursor-pointer'>
+          <SidebarItem
+            as={Link}
+            to="/dashboard?tab=profile"
+            active={tab === 'profile'}
+            icon={HiUser}
+            label="User"
+            labelColor="dark"
+          >
+            Profile
+          </SidebarItem>
+          <SidebarItem icon={TbLogout2} className="cursor-pointer">
             Sign out
           </SidebarItem>
         </SidebarItemGroup>
