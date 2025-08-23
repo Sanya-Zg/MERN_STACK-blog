@@ -1,5 +1,10 @@
 import {
+  Avatar,
   Button,
+  Dropdown,
+  DropdownDivider,
+  DropdownHeader,
+  DropdownItem,
   Navbar,
   NavbarBrand,
   NavbarCollapse,
@@ -9,12 +14,17 @@ import {
 } from 'flowbite-react';
 import { Link, useLocation } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { FaMoon } from 'react-icons/fa';
+import { FaMoon, FaSun } from 'react-icons/fa';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleTheme } from '../redux/themeSlice';
 
 const Header = () => {
   const path = useLocation().pathname;
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme)
   return (
-    <Navbar className='border-b-2 border-b-gray-200 shadow-md'>
+    <Navbar className="border-b-2 border-b-gray-200 shadow-md">
       {/* Logo */}
       <NavbarBrand
         as={Link}
@@ -45,15 +55,50 @@ const Header = () => {
 
       <div className="flex gap-2 md:order-2">
         {/* change theme */}
-        <Button color="light" className="hidden sm:inline" pill>
-          <FaMoon />
-        </Button>
-        <Link
-          to="sign-in"
-          className="w-20 py-1 rounded-md flex justify-center items-center bg-gradient-to-l from-teal-600 to-lime-200 text-gray-900 shadow-md shadow-teal-800 hover:scale-[1.03] active:translate-y-1 transition-all duration-300 will-change-transform"
+        <Button
+          color="light"
+          className="hidden sm:inline"
+          pill
+          onClick={() => dispatch(toggleTheme())}
         >
-          Sign In
-        </Link>
+          {theme === 'light' ? <FaSun/> : <FaMoon />}
+        </Button>
+        {currentUser ? (
+          <Dropdown
+            arrowIcon={false}
+            inline
+            className="bg-gray-200 border-2 rounded-md shadow-lg"
+            label={
+              <Avatar
+                alt="user"
+                img={currentUser.profilePicture}
+                rounded
+                className="cursor-pointer"
+              />
+            }
+          >
+            <DropdownHeader>
+              <span className="block text-sm">@{currentUser.username}</span>
+              <span className="block text-sm font-medium">
+                {currentUser.email}
+              </span>
+            </DropdownHeader>
+
+            <Link to={'/dashboard?tab=profile'}>
+              <DropdownItem>Profile</DropdownItem>
+            </Link>
+
+            <DropdownDivider />
+          </Dropdown>
+        ) : (
+          <Link
+            to="sign-in"
+            className="w-20 py-1 rounded-md flex justify-center items-center bg-gradient-to-l from-teal-600 to-lime-200 text-gray-900 shadow-md shadow-teal-800 hover:scale-[1.03] active:translate-y-1 transition-all duration-300 "
+          >
+            <span className='transform-none'>Sign In</span>
+          </Link>
+        )}
+
         <NavbarToggle />
       </div>
       <NavbarCollapse>

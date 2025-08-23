@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
     profilePicture: {
       type: String,
       default:
-        'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fimages%2Fsearch%2Fprofile%2520icon%2F&psig=AOvVaw3LQD5OqcZB_o56MF4W6OZA&ust=1755957504367000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCKje58zJno8DFQAAAAAdAAAAABAE',
+        'https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png',
     },
   },
   { timestamps: true }
