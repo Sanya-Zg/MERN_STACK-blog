@@ -24,7 +24,7 @@ const DashSidebar = () => {
               Profile
             </SidebarItem>
           </Link>
-          <SidebarItem icon={TbLogout2}>
+          <SidebarItem icon={TbLogout2} className='cursor-pointer'>
             Sign out
           </SidebarItem>
         </SidebarItemGroup>
