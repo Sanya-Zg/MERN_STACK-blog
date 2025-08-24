@@ -37,14 +37,14 @@ export const updateUser = async (req, res, next) => {
 
     // Regex: only lowercase letters, numbers, _ and -
     const usernameRegex = /^[a-z0-9_-]+$/;
-     if (!usernameRegex.test(userName)) {
-       return next(
-         errorHandler(
-           400,
-           'Username can only contain lowercase letters, numbers, "_" and "-"'
-         )
-       );
-     }
+    if (!usernameRegex.test(userName)) {
+      return next(
+        errorHandler(
+          400,
+          'Username can only contain lowercase letters, numbers, "_" and "-"'
+        )
+      );
+    }
   }
 
   try {
@@ -58,8 +58,13 @@ export const updateUser = async (req, res, next) => {
           password: req.body.password,
         },
       },
-      { new: true }
+      { new: true, runValidators: true }
     );
+
+    if (!updatedUser) {
+      return next(errorHandler(404, 'User not found'));
+    }
+    
     const { password, ...rest } = updatedUser._doc;
     return res.status(200).json(rest);
   } catch (error) {
