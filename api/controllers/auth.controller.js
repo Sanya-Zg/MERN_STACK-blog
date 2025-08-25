@@ -5,6 +5,8 @@ import { errorHandler } from '../utils/errors.js';
 import sendEmail from '../config/sendEmail.js';
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
 import jwt from 'jsonwebtoken';
+import generatedOTP from '../utils/generatedOTP.js';
+import forgotPasswordTemplate from '../utils/forgotPasswordTemplate.js';
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -69,14 +71,14 @@ export const signup = async (req, res, next) => {
     // Sending verification email
     const verifyEmailUrl = `${process.env.FRONTEND_URI}/verify-email?code=${save?._id}`;
 
-    // const verifyEmail = await sendEmail({
-    //   sendTo: email,
-    //   subject: 'Verify email from SanyaBlog',
-    //   html: verifyEmailTemplate({
-    //     username,
-    //     url: verifyEmailUrl,
-    //   }),
-    // });
+    const verifyEmail = await sendEmail({
+      sendTo: email,
+      subject: 'Verify email from SanyaBlog',
+      html: verifyEmailTemplate({
+        username,
+        url: verifyEmailUrl,
+      }),
+    });
 
     return res
       .status(201)
@@ -170,13 +172,20 @@ export const google = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user) {
-      const token = jwt.sign({ userId: user._id}, process.env.JWT_SECRET, {expiresIn: '1d'});
-      const {password, ...rest} = user._doc;
-      res.status(200).cookie('access_token', token, {
-        httpOnly: true
-      }).json(rest)
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '1d',
+      });
+      const { password, ...rest } = user._doc;
+      res
+        .status(200)
+        .cookie('access_token', token, {
+          httpOnly: true,
+        })
+        .json(rest);
     } else {
-      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
       const hashedPassword = await bcryptjs.hash(generatedPassword, 10);
       const newUser = new User({
         username:
@@ -200,5 +209,114 @@ export const google = async (req, res, next) => {
     }
   } catch (error) {
     next(error);
+  }
+};
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(errorHandler(400, 'Email is not available'));
+    }
+
+    const otp = generatedOTP();
+    const expireTime = new Date(Date.now() + 60 * 60 * 1000); // 1hr
+
+    await User.findByIdAndUpdate(user._id, {
+      forgot_password_otp: otp,
+      forgot_password_expiry: expireTime,
+    });
+
+    await sendEmail({
+      sendTo: email,
+      subject: 'Forgot password from Blog APP',
+      html: forgotPasswordTemplate({
+        name: user.username,
+        otp: otp,
+      }),
+    });
+
+    return res.json({
+      message: 'Check your email',
+      success: true,
+    });
+  } catch (error) {
+    return next(errorHandler(500, error.message || error));
+  }
+};
+
+export const verifyOTP = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return next(errorHandler(400, 'Email and OTP fields are required'));
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(errorHandler(400, 'Email not available'));
+    }
+
+    const currentTime = new Date();
+
+    if (otp !== user.forgot_password_otp) {
+      return next(errorHandler(400, 'Invalid OTP'));
+    }
+
+    if (user.forgot_password_expiry < currentTime) {
+      return next(errorHandler(400, 'OTP has expired'));
+    }
+
+    await User.findByIdAndUpdate(user?._id, {
+      forgot_password_otp: '',
+      forgot_password_expiry: '',
+    });
+
+    return res.json({
+      message: 'OTP verification successful',
+      success: true,
+    });
+  } catch (error) {
+    return next(errorHandler(500, error.message || error));
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { email, newPassword, confirmPassword } = req.body;
+
+    if (!email || !newPassword || !confirmPassword) {
+      return next(errorHandler(400, 'All fields must be filled in'));
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return next(errorHandler(400, 'Email is not available'));
+    }
+
+    if (newPassword !== confirmPassword) {
+      return next(errorHandler(400, 'Passwords do not match'));
+    }
+
+    if (newPassword.length < 6) {
+      return next(errorHandler(400, 'Password must be at least 6 characters'));
+    }
+
+    const salt = await bcryptjs.genSalt(10);
+    const hashPassword = await bcryptjs.hash(newPassword, salt);
+
+    await User.findByIdAndUpdate(user._id, {
+      password: hashPassword,
+    });
+
+    return res.json({
+      message: 'Password updated successfully',
+      success: true,
+    });
+  } catch (error) {
+    return next(errorHandler(500, error.message || error));
   }
 };

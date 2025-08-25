@@ -138,17 +138,19 @@ const SignIn = () => {
             <OAuth />
           </form>
 
-          <div className="flex gap-2 text-sm mt-5">
-            <span>Don't have an account?</span>
-            <Link to="/sign-up" className="text-cyan-500 font-medium">
-              Sign Up
-            </Link>
-          </div>
-
-          <div className="flex gap-2 text-sm mt-3">
-            <Link to="/sign-up" className="font-semibold text-cyan-600">
-              Forgot password
-            </Link>
+          <div className="flex justify-between pt-5">
+            <div className="flex gap-2 text-sm  font-medium">
+              <span className="text-gray-500">Don't have an account?</span>
+              <Link
+                to="/sign-up"
+                className="text-cyan-500 hover:text-cyan-700 transition duration-200"
+              >
+                Sign Up
+              </Link>
+            </div>
+            <div className="flex gap-2 text-sm font-semibold text-amber-600 hover:text-amber-500 transition-all duration-200 ">
+              <Link to="/forgot-password">Forgot password</Link>
+            </div>
           </div>
 
           {errorMessage && (

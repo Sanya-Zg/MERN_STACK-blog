@@ -7,6 +7,9 @@ import Projects from './pages/Projects';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
+import ForgotPassword from './pages/ForgotPassword';
+import VerificationOTP from './pages/VerificationOTP';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
           </Route>
           <Route path="sign-in" element={<SignIn />} />
           <Route path="sign-up" element={<SignUp />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="verification-otp" element={<VerificationOTP />} />
+          <Route path="reset-password" element={<ResetPassword />} />
         </Route>
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>

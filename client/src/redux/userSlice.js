@@ -4,6 +4,7 @@ const initialState = {
   currentUser: null,
   error: null,
   loading: false,
+  forgotPasswordMessage: null,
 };
 
 const userSlice = createSlice({
@@ -36,6 +37,25 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    forgotPasswordStart: (state) => {
+      state.loading = true;
+      state.error = null;
+      state.forgotPasswordMessage = null;
+    },
+    forgotPasswordSuccess: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.forgotPasswordMessage = action.payload;
+    },
+    forgotPasswordFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      state.forgotPasswordMessage = null;
+    },
+    clearMessages: (state) => {
+      state.error = null;
+      state.forgotPasswordMessage = null;
+    },
   },
 });
 
@@ -46,5 +66,9 @@ export const {
   updateStart,
   updateSuccess,
   updateFailure,
+  forgotPasswordStart,
+  forgotPasswordSuccess,
+  forgotPasswordFailure,
+  clearMessages
 } = userSlice.actions;
 export default userSlice.reducer;
