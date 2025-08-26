@@ -17,12 +17,28 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/themeSlice';
+import { signOutSuccess } from '../redux/userSlice';
 
 const Header = () => {
   const path = useLocation().pathname;
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
-  const { theme } = useSelector((state) => state.theme)
+  const { theme } = useSelector((state) => state.theme);
+
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch('/api/user/signout', { method: 'POST' });
+      const data = res.json();
+
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   return (
     <Navbar className="border-b-2 border-b-gray-200 shadow-md">
       {/* Logo */}
@@ -61,7 +77,7 @@ const Header = () => {
           pill
           onClick={() => dispatch(toggleTheme())}
         >
-          {theme === 'light' ? <FaSun/> : <FaMoon />}
+          {theme === 'light' ? <FaSun /> : <FaMoon />}
         </Button>
         {currentUser ? (
           <Dropdown
@@ -89,13 +105,14 @@ const Header = () => {
             </Link>
 
             <DropdownDivider />
+            <DropdownItem onClick={handleSignOut}>Sign out</DropdownItem>
           </Dropdown>
         ) : (
           <Link
             to="sign-in"
             className="w-20 py-1 rounded-md flex justify-center items-center bg-gradient-to-l from-teal-600 to-lime-200 text-gray-900 shadow-md shadow-teal-800 hover:scale-[1.03] active:translate-y-1 transition-all duration-300 "
           >
-            <span className='transform-none'>Sign In</span>
+            <span className="transform-none">Sign In</span>
           </Link>
         )}
 

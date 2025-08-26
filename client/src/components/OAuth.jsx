@@ -18,18 +18,19 @@ const OAuth = () => {
       const resultsFromGoogle = await signInWithPopup(auth, provider);
       const res = await fetch('/api/auth/google', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           name: resultsFromGoogle.user.displayName,
           email: resultsFromGoogle.user.email,
-          googlePhotoUrl: resultsFromGoogle.user.photoURL
-        })
-      })
+          googlePhotoUrl: resultsFromGoogle.user.photoURL,
+        }),
+      });
       const data = await res.json();
       if (res.ok) {
         dispatch(signInSuccess(data));
         navigate('/')
-      }
+      } 
     } catch (error) {
       console.log(error);
     }

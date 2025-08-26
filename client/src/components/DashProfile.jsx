@@ -161,6 +161,7 @@ const DashProfile = () => {
       dispatch(deleteUserFailure(error.message));
     }
   };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center text-3xl font-semibold">Profile</h1>
@@ -240,10 +241,10 @@ const DashProfile = () => {
       </form>
 
       <div className="text-red-700 flex justify-between mt-5">
-        <span onClick={() => setShowModal(true)} className="cursor-pointer">
+        <span onClick={() => setShowModal(true)} className="cursor-pointer shadow-lg inline-block p-2 rounded-lg bg-cyan-50 font-semibold hover:bg-cyan-100">
           Delete Account
         </span>
-        <span className="cursor-pointer">Sign Out</span>
+        
       </div>
 
       {updateUserSuccess && (

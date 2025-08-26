@@ -166,6 +166,7 @@ export const signin = async (req, res, next) => {
 };
 
 export const google = async (req, res, next) => {
+  console.log('REQ BODY:', req.body);
   const { name, email, googlePhotoUrl } = req.body;
 
   try {
@@ -196,7 +197,7 @@ export const google = async (req, res, next) => {
         profilePicture: googlePhotoUrl,
       });
       await newUser.save();
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
         expiresIn: '1d',
       });
       const { password, ...rest } = newUser._doc;
