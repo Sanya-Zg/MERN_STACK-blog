@@ -150,7 +150,7 @@ export const signin = async (req, res, next) => {
     }
 
     // Create token (jwt)
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
       expiresIn: '1d',
     });
 
@@ -166,16 +166,20 @@ export const signin = async (req, res, next) => {
 };
 
 export const google = async (req, res, next) => {
-  console.log('REQ BODY:', req.body);
+  
   const { name, email, googlePhotoUrl } = req.body;
 
   try {
     const user = await User.findOne({ email });
 
     if (user) {
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: '1d',
-      });
+      const token = jwt.sign(
+        { userId: user._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: '1d',
+        }
+      );
       const { password, ...rest } = user._doc;
       res
         .status(200)
@@ -197,9 +201,13 @@ export const google = async (req, res, next) => {
         profilePicture: googlePhotoUrl,
       });
       await newUser.save();
-      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
-        expiresIn: '1d',
-      });
+      const token = jwt.sign(
+        { userId: newUser._id, isAdmin: newUser.isAdmin },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: '1d',
+        }
+      );
       const { password, ...rest } = newUser._doc;
       res
         .status(200)

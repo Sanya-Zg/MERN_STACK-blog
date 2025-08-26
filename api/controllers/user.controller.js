@@ -36,7 +36,7 @@ export const updateUser = async (req, res, next) => {
     }
 
     // Regex: only lowercase letters, numbers, _ and -
-    const usernameRegex = /^[a-z0-9_-]+$/;
+    const usernameRegex = /^[\p{L}\p{N}_-]+$/u;
     if (!usernameRegex.test(userName)) {
       return next(
         errorHandler(

@@ -241,7 +241,7 @@ const DashProfile = () => {
       </form>
 
       <div className="text-red-700 flex justify-between mt-5">
-        <span onClick={() => setShowModal(true)} className="cursor-pointer shadow-lg inline-block p-2 rounded-lg bg-cyan-50 font-semibold hover:bg-cyan-100">
+        <span onClick={() => setShowModal(true)} className="cursor-pointer shadow-lg inline-block p-2 rounded-lg border-1 font-semibold hover:bg-amber-100">
           Delete Account
         </span>
         
