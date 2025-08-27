@@ -10,6 +10,8 @@ import PrivateRoute from './components/PrivateRoute';
 import ForgotPassword from './pages/ForgotPassword';
 import VerificationOTP from './pages/VerificationOTP';
 import ResetPassword from './pages/ResetPassword';
+import OnlyAdminPrivateRoute from './components/OnlyAdminPrivateRoute';
+import CreatePost from './pages/CreatePost';
 
 function App() {
   return (
@@ -22,6 +24,10 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="dashboard" element={<Dashboard />} />
           </Route>
+          <Route element={<OnlyAdminPrivateRoute />}>
+            <Route path="create-post" element={<CreatePost />} />
+          </Route>
+
           <Route path="sign-in" element={<SignIn />} />
           <Route path="sign-up" element={<SignUp />} />
           <Route path="forgot-password" element={<ForgotPassword />} />

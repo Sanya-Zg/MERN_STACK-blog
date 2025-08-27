@@ -27,9 +27,10 @@ import {
   deleteUserFailure,
 } from '../redux/userSlice';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
 
 const DashProfile = () => {
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -234,17 +235,31 @@ const DashProfile = () => {
 
         <Button
           type="submit"
-          className="bg-gradient-to-l from-teal-600 to-lime-100 text-gray-900 shadow-md hover:bg-gradient-to-l hover:from-teal-800 hover:to-lime-100 active:translate-y-0.5 transition duration-200"
+          disabled={loading || imageFileUploading}
+          className="bg-gradient-to-l from-teal-600 to-lime-100 text-gray-900 shadow-md hover:bg-gradient-to-l hover:from-teal-800 hover:to-lime-100 active:translate-y-0.5 transition duration-200 cursor-pointer"
         >
-          Update
+          {loading ? 'Loading...' : 'Update'}
         </Button>
+
+        {currentUser.isAdmin && (
+          <Link to="/create-post">
+            <Button
+              type="button"
+              className="w-full bg-gradient-to-l from-neutral-700 via-amber-300 to-neutral-700 text-gray-900 shadow-md hover:bg-gradient-to-l hover:from-neutral-600 hover:via-amber-200 hover:to-neutral-600 active:translate-y-0.5 transition duration-200 cursor-pointer"
+            >
+              Create a post
+            </Button>
+          </Link>
+        )}
       </form>
 
       <div className="text-red-700 flex justify-between mt-5">
-        <span onClick={() => setShowModal(true)} className="cursor-pointer shadow-lg inline-block p-2 rounded-lg border-1 font-semibold hover:bg-amber-100">
+        <span
+          onClick={() => setShowModal(true)}
+          className="cursor-pointer shadow-lg inline-block p-2 rounded-lg border-1 font-semibold hover:bg-amber-100"
+        >
           Delete Account
         </span>
-        
       </div>
 
       {updateUserSuccess && (
