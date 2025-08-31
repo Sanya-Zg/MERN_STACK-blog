@@ -26,7 +26,7 @@ export default function CreatePost() {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
-
+  
   const navigate = useNavigate();
 
   const handleUpdloadImage = async () => {
@@ -48,6 +48,7 @@ export default function CreatePost() {
           setImageUploadProgress(progress.toFixed(0));
         },
         (error) => {
+          console.log(error);
           setImageUploadError('Image upload failed');
           setImageUploadProgress(null);
         },
@@ -87,6 +88,7 @@ export default function CreatePost() {
       }
     } catch (error) {
       setPublishError('Something went wrong');
+      console.log(error);
     }
   };
   return (
@@ -155,8 +157,8 @@ export default function CreatePost() {
           rows={10}
           placeholder="Your text..."
           required
-          onChange={(value) => {
-            setFormData({ ...formData, content: value });
+          onChange={(e) => {
+            setFormData({ ...formData, content: e.target.value });
           }}
         />
         <Button
