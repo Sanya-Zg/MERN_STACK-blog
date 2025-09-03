@@ -12,6 +12,7 @@ import VerificationOTP from './pages/VerificationOTP';
 import ResetPassword from './pages/ResetPassword';
 import OnlyAdminPrivateRoute from './components/OnlyAdminPrivateRoute';
 import CreatePost from './pages/CreatePost';
+import UpdatePost from './pages/UpdatePost';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           </Route>
           <Route element={<OnlyAdminPrivateRoute />}>
             <Route path="create-post" element={<CreatePost />} />
+            <Route path="update-post/:postId" element={<UpdatePost />} />
           </Route>
 
           <Route path="sign-in" element={<SignIn />} />
