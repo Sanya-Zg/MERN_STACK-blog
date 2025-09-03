@@ -2,6 +2,7 @@
 @plugin "flowbite-react/plugin/tailwindcss";
 @source "../.flowbite-react/class-list.json";
 @custom-variant dark (&:where(.dark, .dark *));
+@plugin "tailwind-scrollbar";
 
 body {
   height: 100vh;
