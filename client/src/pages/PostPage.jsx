@@ -3,12 +3,14 @@ import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button, Spinner } from 'flowbite-react';
 import CommentSection from '../components/CommentSection';
+import PostCart from '../components/PostCart';
 
 const PostPage = () => {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
+  const [recentPosts, setRecentPosts] = useState(null);
 
   useEffect(() => {
     // Fetch post data using postSlug
@@ -30,13 +32,28 @@ const PostPage = () => {
           setError(false);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
         setError(true);
         setLoading(false);
       }
     };
     fetchPost();
   }, [postSlug]);
+
+  useEffect(() => {
+    try {
+      const fetchRecentPosts = async () => {
+        const res = await fetch('/api/post/getposts?limit=3');
+        const data = await res.json();
+        if (res.ok) {
+          setRecentPosts(data.posts);
+        }
+      };
+      fetchRecentPosts();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -76,9 +93,17 @@ const PostPage = () => {
       <div className="p-3 max-w-2xl mx-auto w-full post-content">
         {post && post.content}
       </div>
-        <CommentSection postId={post._id} />
-        {error}
-      
+      <CommentSection postId={post._id} />
+      {error}
+
+      <div className="flex flex-col justify-center items-center mb-5">
+        <h1>Recent articles</h1>
+        <div className="flex flex-wrap gap-5 justify-center mt-5">
+          {recentPosts && recentPosts.map((post) => (
+            <PostCart post={post} key={post._id} />
+          ))}
+        </div>
+      </div>
     </main>
   );
 };
