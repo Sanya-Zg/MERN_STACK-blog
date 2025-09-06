@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { FaThumbsUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
-const Comment = ({ comment, onLike, onEdit }) => {
+const Comment = ({ comment, onLike, onEdit, onDelete }) => {
   const [user, setUser] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
@@ -35,7 +35,7 @@ const Comment = ({ comment, onLike, onEdit }) => {
       const res = await fetch(`/api/comment/editComment/${comment._id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json', 
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ content: editedContent }),
       });
@@ -43,12 +43,10 @@ const Comment = ({ comment, onLike, onEdit }) => {
         setIsEditing(false);
         onEdit(comment._id, editedContent);
       }
-
-      
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
   return (
     <div className="flex p-4 border-b dark:border-gray-600 text-sm">
       <div className="flex-shrink-0 mr-3">
@@ -117,14 +115,24 @@ const Comment = ({ comment, onLike, onEdit }) => {
                     (comment.numberOfLikes === 1 ? 'like' : 'likes')}
               </p>
               {currentUser && comment.userId === currentUser._id && (
-                <button
-                  type="button"
-                  className="text-gray-500 hover:text-cyan-600 cursor-pointer"
-                  aria-label="Edit"
-                  onClick={handleEdit}
-                >
-                  Edit
-                </button>
+                <>
+                  <button
+                    type="button"
+                    className="text-gray-500 hover:text-cyan-600 cursor-pointer"
+                    aria-label="Edit"
+                    onClick={handleEdit}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="text-gray-500 hover:text-red-600 cursor-pointer"
+                    aria-label="Delete"
+                    onClick={() => onDelete(comment._id)}
+                  >
+                    Delete
+                  </button>
+                </>
               )}
             </div>
           </>
