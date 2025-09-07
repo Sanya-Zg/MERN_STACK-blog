@@ -15,6 +15,7 @@ import CreatePost from './pages/CreatePost';
 import UpdatePost from './pages/UpdatePost';
 import PostPage from './pages/PostPage';
 import ScrollToTop from './components/ScrollToTop';
+import Search from './pages/Search';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="projects" element={<Projects />} />
+          <Route path="search" element={<Search />} />
           <Route path="post/:postSlug" element={<PostPage />} />
 
           <Route element={<PrivateRoute />}>
