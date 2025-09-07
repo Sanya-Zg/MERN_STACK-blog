@@ -5,7 +5,13 @@ import {
   SidebarItems,
 } from 'flowbite-react';
 import { useEffect, useState } from 'react';
-import { HiAnnotation, HiDocumentText, HiOutlineAnnotation, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
+import {
+  HiChartPie,
+  HiDocumentText,
+  HiOutlineAnnotation,
+  HiOutlineUserGroup,
+  HiUser,
+} from 'react-icons/hi';
 import { TbLogout2 } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -45,7 +51,17 @@ const DashSidebar = () => {
   return (
     <Sidebar className="w-full">
       <SidebarItems>
-        <SidebarItemGroup className='flex flex-col gap-1'>
+        <SidebarItemGroup className="flex flex-col gap-1">
+          {currentUser && currentUser.isAdmin && (
+            <SidebarItem
+              as={Link}
+              to="/dashboard?tab=dash"
+              active={tab === 'dash' || !tab}
+              icon={HiChartPie}
+            >
+              Dashboard
+            </SidebarItem>
+          )}
           <SidebarItem
             as={Link}
             to="/dashboard?tab=profile"
@@ -68,25 +84,23 @@ const DashSidebar = () => {
           )}
           {currentUser.isAdmin && (
             <>
-            <SidebarItem
-              as={Link}
-              to="/dashboard?tab=users"
-              active={tab === 'users'}
-              icon={HiOutlineUserGroup}
-            >
-              Users
-            </SidebarItem>
-            <SidebarItem
-              as={Link}
-              to="/dashboard?tab=comments"
-              active={tab === 'comments'}
-              icon={HiOutlineAnnotation}
-            >
-              Comments
-            </SidebarItem>
-
+              <SidebarItem
+                as={Link}
+                to="/dashboard?tab=users"
+                active={tab === 'users'}
+                icon={HiOutlineUserGroup}
+              >
+                Users
+              </SidebarItem>
+              <SidebarItem
+                as={Link}
+                to="/dashboard?tab=comments"
+                active={tab === 'comments'}
+                icon={HiOutlineAnnotation}
+              >
+                Comments
+              </SidebarItem>
             </>
-            
           )}
 
           <SidebarItem
