@@ -20,12 +20,10 @@ export default function Home() {
           Welcome to my Blog
         </h1>
         <p className="text-gray-500 text-xs sm:text-sm">
-          Welcome to my blog! Here you'll find a wide range of articles,
-          tutorials, and resources designed to help you grow as a developer.
-          Whether you're interested in web development, software engineering,
-          programming languages, or best practices in the tech industry, there's
-          something here for everyone. Dive in and explore the content to expand
-          your knowledge and skills.
+          Welcome to my blog! Here you'll find a different articles on web
+          development, programming, and technology. I share my knowledge and
+          experiences to help you stay up-to-date with the latest trends and
+          best practices in the industry.
         </p>
         <Link
           to="/search"

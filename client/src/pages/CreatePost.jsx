@@ -111,6 +111,7 @@ export default function CreatePost() {
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
             }
+            className='w-48'
           >
             <option value="uncategorized">Select a category</option>
             <option value="javascript">JavaScript</option>
