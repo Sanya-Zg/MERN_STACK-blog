@@ -1,4 +1,4 @@
-import { parse } from 'dotenv';
+
 import Post from '../models/post.model.js';
 import { errorHandler } from '../utils/errors.js';
 
