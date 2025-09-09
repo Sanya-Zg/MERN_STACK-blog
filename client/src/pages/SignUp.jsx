@@ -10,6 +10,8 @@ import { useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { useDispatch } from 'react-redux';
+import { setVerifyEmailMessage, setSignUpMessage } from '../redux/userSlice';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
@@ -18,6 +20,9 @@ const SignUp = () => {
   const [fieldEmpty, setFieldEmpty] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
+  
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -62,6 +67,9 @@ const SignUp = () => {
       setLoading(false);
 
       if (res.ok) {
+        dispatch(setVerifyEmailMessage(data.messageVerifyEmail));
+        dispatch(setSignUpMessage(data.message));
+        setFormData({});
         navigate('/sign-in');
       }
     } catch (error) {
@@ -164,6 +172,8 @@ const SignUp = () => {
               {errorMessage}
             </Alert>
           )}
+
+          
         </div>
       </div>
     </div>

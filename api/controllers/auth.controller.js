@@ -80,9 +80,11 @@ export const signup = async (req, res, next) => {
       }),
     });
 
-    return res
-      .status(201)
-      .json({ success: true, message: 'User created successfully!' });
+    return res.status(201).json({
+      success: true,
+      message: 'User created successfully!',
+      messageVerifyEmail: 'Please verify your email. Check your inbox.',
+    });
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(400).json({
@@ -115,7 +117,7 @@ export const verifyEmail = async (req, res, next) => {
     await user.save();
 
     return res.json({
-      message: 'Verify email done',
+      message: 'Email verified successfully',
       success: true,
     });
   } catch (error) {
@@ -142,6 +144,10 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(404, 'Wrong credentials'));
     }
 
+    if (!user.isVerified) {
+      return next(errorHandler(401, 'Please verify your email to sign in. Check your inbox'));
+    }
+
     // Check if password is valid
     const validPassword = await bcryptjs.compare(password, user.password);
 
@@ -150,9 +156,13 @@ export const signin = async (req, res, next) => {
     }
 
     // Create token (jwt)
-    const token = jwt.sign({ userId: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = jwt.sign(
+      { userId: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1d',
+      }
+    );
 
     const { password: pass, ...rest } = user._doc;
 
@@ -166,7 +176,6 @@ export const signin = async (req, res, next) => {
 };
 
 export const google = async (req, res, next) => {
-  
   const { name, email, googlePhotoUrl } = req.body;
 
   try {

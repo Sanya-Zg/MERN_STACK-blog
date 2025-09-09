@@ -5,6 +5,8 @@ const initialState = {
   error: null,
   loading: false,
   forgotPasswordMessage: null,
+  verifyEmailMessage: null,
+  signUpMessage: null
 };
 
 const userSlice = createSlice({
@@ -23,6 +25,12 @@ const userSlice = createSlice({
     signInFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    },
+    setVerifyEmailMessage: (state, action) => {
+      state.verifyEmailMessage = action.payload;
+    },
+    setSignUpMessage: (state, action) => {
+      state.signUpMessage = action.payload;
     },
     updateStart: (state) => {
       state.loading = true;
@@ -55,6 +63,8 @@ const userSlice = createSlice({
     clearMessages: (state) => {
       state.error = null;
       state.forgotPasswordMessage = null;
+      state.verifyEmailMessage = null;
+      state.signUpMessage = null;
     },
     deleteUserStart: (state) => {
       state.loading = true;
@@ -73,7 +83,7 @@ const userSlice = createSlice({
       state.currentUser = null;
       state.loading = false;
       state.error = null;
-    }
+    },
   },
 });
 
@@ -81,6 +91,8 @@ export const {
   signInStart,
   signInSuccess,
   signInFailure,
+  setVerifyEmailMessage,
+  setSignUpMessage,
   updateStart,
   updateSuccess,
   updateFailure,

@@ -6,22 +6,41 @@ import {
   Spinner,
   TextInput,
 } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaRegEyeSlash } from 'react-icons/fa6';
 import { FaRegEye } from 'react-icons/fa6';
 import { useDispatch, useSelector } from 'react-redux';
-import { signInFailure, signInStart, signInSuccess } from '../redux/userSlice';
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+  clearMessages,
+} from '../redux/userSlice';
 import OAuth from '../components/OAuth';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   const [fieldEmpty, setFieldEmpty] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const {
+    loading,
+    error: errorMessage,
+    verifyEmailMessage,
+    signUpMessage,
+  } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+ useEffect(() => {
+   if (signUpMessage || verifyEmailMessage || errorMessage) {
+     const timer = setTimeout(() => {
+       dispatch(clearMessages());
+     }, 15000); 
+     return () => clearTimeout(timer);
+   }
+ }, [dispatch, signUpMessage, verifyEmailMessage, errorMessage]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -156,6 +175,16 @@ const SignIn = () => {
           {errorMessage && (
             <Alert className="mt-3" color="failure">
               {errorMessage}
+            </Alert>
+          )}
+          {signUpMessage && (
+            <Alert className="mt-3" color="success">
+              {signUpMessage}
+            </Alert>
+          )}
+          {verifyEmailMessage && (
+            <Alert className="mt-3" color="info">
+              {verifyEmailMessage}
             </Alert>
           )}
         </div>

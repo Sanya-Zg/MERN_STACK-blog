@@ -67,7 +67,7 @@ const DashSidebar = () => {
             to="/dashboard?tab=profile"
             active={tab === 'profile'}
             icon={HiUser}
-            label={currentUser ? 'Admin' : 'User'}
+            label={currentUser.isAdmin ? 'Admin' : 'User'}
             labelColor="dark"
           >
             Profile
