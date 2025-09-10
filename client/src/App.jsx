@@ -17,6 +17,7 @@ import PostPage from './pages/PostPage';
 import ScrollToTop from './components/ScrollToTop';
 import Search from './pages/Search';
 import VerifyEmail from './pages/VerifyEmail';
+import VerificationEmail from './pages/VerificationEmail';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="verification-otp" element={<VerificationOTP />} />
           <Route path="reset-password" element={<ResetPassword />} />
           <Route path="verify-email" element={<VerifyEmail />} />
+          <Route path="verification-email" element={<VerificationEmail />} />
         </Route>
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>

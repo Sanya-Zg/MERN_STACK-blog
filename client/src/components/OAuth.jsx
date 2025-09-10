@@ -3,7 +3,7 @@ import { AiFillGoogleCircle } from 'react-icons/ai';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { app } from '../firebase';
 import { useDispatch } from 'react-redux';
-import { signInSuccess } from '../redux/userSlice';
+import { signInSuccess, signInFailure } from '../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const OAuth = () => {
@@ -27,10 +27,13 @@ const OAuth = () => {
         }),
       });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.success !== false) {
         dispatch(signInSuccess(data));
         navigate('/')
-      } 
+      } else {
+        dispatch(signInFailure(data.message));
+        navigate('/verification-email');
+      }
     } catch (error) {
       console.log(error);
     }

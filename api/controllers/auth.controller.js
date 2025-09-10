@@ -177,11 +177,20 @@ export const signin = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
   const { name, email, googlePhotoUrl } = req.body;
-
+  
   try {
     const user = await User.findOne({ email });
 
     if (user) {
+      if (!user.isVerified) {
+        return next(
+          errorHandler(
+            401,
+            'Please verify your email to sign in. Check your inbox'
+          )
+        );
+      }
+
       const token = jwt.sign(
         { userId: user._id, isAdmin: user.isAdmin },
         process.env.JWT_SECRET,
@@ -210,20 +219,24 @@ export const google = async (req, res, next) => {
         profilePicture: googlePhotoUrl,
       });
       await newUser.save();
-      const token = jwt.sign(
-        { userId: newUser._id, isAdmin: newUser.isAdmin },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: '1d',
-        }
-      );
-      const { password, ...rest } = newUser._doc;
-      res
-        .status(200)
-        .cookie('access_token', token, {
-          httpOnly: true,
-        })
-        .json(rest);
+
+      // Sending verification email
+      const verifyEmailUrl = `${process.env.FRONTEND_URI}/verify-email?code=${newUser._id}`;
+
+      await sendEmail({
+        sendTo: email,
+        subject: 'Verify email from SanyaBlog',
+        html: verifyEmailTemplate({
+          username: name,
+          url: verifyEmailUrl,
+        }),
+      });
+
+      res.status(200).json({
+        success: false,
+        message: 'Please verify your email. Check your inbox.',
+      });
+        
     }
   } catch (error) {
     next(error);
